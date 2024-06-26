@@ -1,4 +1,6 @@
 using ApiBanco.Data;
+using ApiBanco.Interface;
+using ApiBanco.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +12,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var DefaultConnetion = "server=localhost;userid=root;password=895smigol;database=LivroAutor;";
+builder.Services.AddScoped<IAccountInterface, AccountService>();
+builder.Services.AddScoped<IUserInterface, UserService>();
+
+var DefaultConnetion = "server=localhost;userid=root;password=895smigol;database=APIbank;";
 
 builder.Services.AddDbContext<AppBankDbContext>(options =>
 {
