@@ -31,7 +31,7 @@ namespace ApiBanco.Services
                 }
 
                 responseModel.Data = await _context.Accounts.Include(user => user.Holder).ToListAsync();
-                responseModel.Message = "Todas as contas foram coletadas!";
+                responseModel.Message = "All accounts have been collected!";
                 return responseModel;
             }
             catch (Exception ex)
@@ -42,14 +42,61 @@ namespace ApiBanco.Services
             }
         }
 
-        public Task<ServiceResponse<AccountModel>> GetAccountById(int id)
+        public async Task<ServiceResponse<AccountModel>> GetAccountById(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<AccountModel> responseModel = new ServiceResponse<AccountModel>();
+
+            try
+            {
+                AccountModel account = await _context.Accounts.Include(bancoAccount => bancoAccount.Holder).FirstOrDefaultAsync(x => x.Id == id);
+
+                if (account == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "No account found!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                responseModel.Data = account;
+                responseModel.Message = "Account found!";
+                return responseModel;
+            }
+
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
         }
 
-        public Task<ServiceResponse<AccountModel>> GetAccountByUser(int userId)
+        public async Task<ServiceResponse<AccountModel>> GetAccountByUser(int userId)
         {
-            throw new NotImplementedException();
+            ServiceResponse<AccountModel> respondeModel = new ServiceResponse<AccountModel>();
+
+            try
+            {
+                AccountModel account = await _context.Accounts.Include(bancoAccounts => bancoAccounts.Holder).Where(bancoAccounts => bancoAccounts.Holder.Id == userId).FirstOrDefaultAsync();
+
+                if(account == null)
+                {
+                    respondeModel.Data = null;
+                    respondeModel.Message = "No accounts found by the informed user!";
+                    respondeModel.Status = false;
+                    return respondeModel;
+                }
+
+                respondeModel.Data = account;
+                respondeModel.Message = "Account Found!";
+                return respondeModel; 
+            }
+            catch (Exception ex)
+            {
+                respondeModel.Message = ex.Message;
+                respondeModel.Status = false;
+                return respondeModel;
+            }
         }
 
         public Task<ServiceResponse<List<AccountModel>>> CreateAccount(CriacaoAccountDto newAccount)

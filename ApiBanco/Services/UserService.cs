@@ -1,6 +1,7 @@
 ﻿using ApiBanco.Data;
 using ApiBanco.Dto.User;
 using ApiBanco.Interface;
+using ApiBanco.Models;
 
 namespace ApiBanco.Services
 {
@@ -13,31 +14,31 @@ namespace ApiBanco.Services
             _context = context;
         }
 
-        public Task<ServiceResponse<List<UserService>>> GetAllUsers()
+        public Task<ServiceResponse<List<UserModel>>> GetAllUsers()
         {
             throw new NotImplementedException();
         }
 
-        public Task<ServiceResponse<UserService>> GetUserById(int id)
+        public Task<ServiceResponse<UserModel>> GetUserById(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ServiceResponse<UserService>> GetUserByIdAccount(int accountId)
+        public Task<ServiceResponse<UserModel>> GetUserByIdAccount(int accountId)
         {
             throw new NotImplementedException();
         }
-        public Task<ServiceResponse<List<UserService>>> CreateUser(CriacaoUserDto newUser)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ServiceResponse<List<UserService>>> EditUser(EdicaoUserDto editUser)
+        public Task<ServiceResponse<List<UserModel>>> CreateUser(CriacaoUserDto newUser)
         {
             throw new NotImplementedException();
         }
 
-        public Task<ServiceResponse<List<UserService>>> DeleteUser(int id)
+        public Task<ServiceResponse<List<UserModel>>> EditUser(EdicaoUserDto editUser)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ServiceResponse<List<UserModel>>> DeleteUser(int id)
         {
             throw new NotImplementedException();
         }
