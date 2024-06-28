@@ -12,6 +12,6 @@ namespace ApiBanco.Models
         public AccountType AccountType { get; set; }
         public double Balance { get; set; }
         public double Limit { get; set; }
-        public bool Status { get; set; }
+        public bool Status { get; set; } 
     }
 }

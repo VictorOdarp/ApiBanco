@@ -1,4 +1,5 @@
-﻿using ApiBanco.Interface;
+﻿using ApiBanco.Dto.Account;
+using ApiBanco.Interface;
 using ApiBanco.Models;
 using ApiBanco.Services;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +29,13 @@ namespace ApiBanco.Controllers
         public async Task<ActionResult<ServiceResponse<List<AccountModel>>>> GetAccountById(int id)
         {
             var account = await _accountInterface.GetAccountById(id);
+            return Ok(account);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ServiceResponse<List<AccountModel>>>> CreateAccount(CriacaoAccountDto newAccount)
+        {
+            var account = await _accountInterface.CreateAccount(newAccount);
             return Ok(account);
         }
     }

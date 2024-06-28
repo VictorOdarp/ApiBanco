@@ -4,6 +4,8 @@ using ApiBanco.Interface;
 using ApiBanco.Models;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Validations;
+using MySqlConnector;
 
 namespace ApiBanco.Services
 {
@@ -99,10 +101,49 @@ namespace ApiBanco.Services
             }
         }
 
-        public Task<ServiceResponse<List<AccountModel>>> CreateAccount(CriacaoAccountDto newAccount)
+        public async Task<ServiceResponse<List<AccountModel>>> CreateAccount(CriacaoAccountDto newAccount)
         {
-            throw new NotImplementedException();
-        }
+            ServiceResponse<List<AccountModel>> responseModel = new ServiceResponse<List<AccountModel>>();
+
+            try
+            {
+                UserModel holder = await _context.Users.FirstOrDefaultAsync(bancoHolders => bancoHolders.Id == newAccount.Holder.Id);
+
+                if (holder == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "Owner not found to create account!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                var account = new AccountModel()
+                {
+                    Holder = holder,
+                    AccountType = newAccount.AccountType,
+                    Balance = newAccount.Balance,
+                    Status = newAccount.Status,
+                };
+
+                if (account.Balance < 5000)
+                {
+                    account.Limit = 200;
+                }
+
+                _context.Add(account);
+                await _context.SaveChangesAsync();
+
+                responseModel.Data = await _context.Accounts.Include(holders => holders.Holder).ToListAsync();
+                responseModel.Message = "Account created successfully!";
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
+        } 
 
         public Task<ServiceResponse<List<AccountModel>>> EditAccount(EdicaoAccountDto editAccount)
         {
