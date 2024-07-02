@@ -32,10 +32,24 @@ namespace ApiBanco.Controllers
             return Ok(account);
         }
 
-        [HttpPost]
+        [HttpPost("CreateAccount")]
         public async Task<ActionResult<ServiceResponse<List<AccountModel>>>> CreateAccount(CriacaoAccountDto newAccount)
         {
             var account = await _accountInterface.CreateAccount(newAccount);
+            return Ok(account);
+        }
+
+        [HttpPut("EditAccount")]
+        public async Task<ActionResult<ServiceResponse<List<AccountModel>>>> EditAccount(EdicaoAccountDto editAccount)
+        {
+            var account = await _accountInterface.EditAccount(editAccount);
+            return Ok(account);
+        }
+
+        [HttpDelete("RemoveAccount")]
+        public async Task<ActionResult<List<AccountModel>>> RemoveAccount(int id)
+        {
+            var account = await _accountInterface.RemoveAccount(id);
             return Ok(account);
         }
     }

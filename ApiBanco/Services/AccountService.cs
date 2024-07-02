@@ -145,14 +145,70 @@ namespace ApiBanco.Services
             }
         } 
 
-        public Task<ServiceResponse<List<AccountModel>>> EditAccount(EdicaoAccountDto editAccount)
+        public async  Task<ServiceResponse<List<AccountModel>>> EditAccount(EdicaoAccountDto editAccount)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<AccountModel>> responseModel = new ServiceResponse<List<AccountModel>>();
+
+            try
+            {
+                AccountModel account = await _context.Accounts.FirstOrDefaultAsync(bancoAccounts => bancoAccounts.Id == editAccount.Id);
+
+                if (account == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "No account found!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                account.AccountType = editAccount.AccountType;
+                account.Limit = editAccount.Limit;
+                account.Status = editAccount.Status;
+
+                _context.Update(account);
+                await _context.SaveChangesAsync();
+
+                responseModel.Data = await _context.Accounts.Include(holder => holder.Holder).ToListAsync();
+                responseModel.Message = "Account edited successfully!";
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
         }
 
-        public Task<ServiceResponse<List<AccountModel>>> RemoveAccount(int id)
+        public async Task<ServiceResponse<List<AccountModel>>> RemoveAccount(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<AccountModel>> responseModel = new ServiceResponse<List<AccountModel>>();
+
+            try
+            {
+                AccountModel account = await _context.Accounts.FirstOrDefaultAsync(bancoAccounts => bancoAccounts.Id == id);
+
+                if (account == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "No account found!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                _context.Remove(account);
+                await _context.SaveChangesAsync();
+
+                responseModel.Data = await _context.Accounts.Include(holder => holder).ToListAsync();
+                responseModel.Message = "Account removed successfully!";
+                return responseModel;
+            }
+            catch(Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
         }
     }
 }
