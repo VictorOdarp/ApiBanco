@@ -210,5 +210,43 @@ namespace ApiBanco.Services
                 return responseModel;
             }
         }
+
+        public async Task<ServiceResponse<AccountModel>> DepositAccount(int id, double value)
+        {
+           ServiceResponse<AccountModel> responseModel = new ServiceResponse<AccountModel>();
+
+            try
+            {
+                AccountModel account = await _context.Accounts.Include(bancoAccount => bancoAccount.Holder).FirstOrDefaultAsync(bancoAccounts => bancoAccounts.Id == id);
+
+                if (account == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "No account found!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                account.Balance += value;
+
+                if (value <= 0)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "Invalid value!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                responseModel.Data = account;
+                responseModel.Message = "Deposit of " + value + (" reais made successfully!");
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
+        }
     }
 }
