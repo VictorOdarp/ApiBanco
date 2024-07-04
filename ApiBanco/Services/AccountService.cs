@@ -4,8 +4,11 @@ using ApiBanco.Interface;
 using ApiBanco.Models;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.OpenApi.Validations;
 using MySqlConnector;
+using System.Reflection.Metadata;
 
 namespace ApiBanco.Services
 {
@@ -240,6 +243,44 @@ namespace ApiBanco.Services
                 responseModel.Data = account;
                 responseModel.Message = "Deposit of " + value + (" reais made successfully!");
                 return responseModel;
+            }
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
+        }
+
+        public async Task<ServiceResponse<AccountModel>> WithdrawAccount(int id, double value)
+        {
+            ServiceResponse<AccountModel> responseModel = new ServiceResponse<AccountModel>();
+
+            try
+            {
+                AccountModel account = await _context.Accounts.Include(bancoAccounts => bancoAccounts.Holder).FirstOrDefaultAsync(bancoAccounts => bancoAccounts.Id == id);
+
+                if (account == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "No account found";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                account.Balance -= value;
+
+                if (value > account.Balance)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "Invalid value";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                responseModel.Data = account;
+                responseModel.Message = "Withdraw of " + value + (" reais made successfully!");
+                return responseModel;  
             }
             catch (Exception ex)
             {

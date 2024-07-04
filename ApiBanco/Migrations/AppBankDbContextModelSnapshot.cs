@@ -43,7 +43,7 @@ namespace ApiBanco.Migrations
 
                     b.HasIndex("HolderId");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("ApiBanco.Models.UserModel", b =>
@@ -66,7 +66,7 @@ namespace ApiBanco.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ApiBanco.Models.AccountModel", b =>
