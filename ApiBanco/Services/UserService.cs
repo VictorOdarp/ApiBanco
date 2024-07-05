@@ -2,6 +2,7 @@
 using ApiBanco.Dto.User;
 using ApiBanco.Interface;
 using ApiBanco.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ApiBanco.Services
 {
@@ -14,9 +15,30 @@ namespace ApiBanco.Services
             _context = context;
         }
 
-        public Task<ServiceResponse<List<UserModel>>> GetAllUsers()
+        public async Task<ServiceResponse<List<UserModel>>> GetAllUsers()
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<UserModel>> responseModel = new ServiceResponse<List<UserModel>>();
+
+            try
+            {
+                if (_context.Users.Count() == 0) 
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "No data found";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                responseModel.Data = await _context.Users.ToListAsync();
+                responseModel.Message = "List of users found!";
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
         }
 
         public Task<ServiceResponse<UserModel>> GetUserById(int id)
