@@ -3,6 +3,7 @@ using ApiBanco.Dto.User;
 using ApiBanco.Interface;
 using ApiBanco.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace ApiBanco.Services
 {
@@ -41,9 +42,33 @@ namespace ApiBanco.Services
             }
         }
 
-        public Task<ServiceResponse<UserModel>> GetUserById(int id)
+        public async Task<ServiceResponse<UserModel>> GetUserById(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<UserModel> responseModel = new ServiceResponse<UserModel>();
+
+            try
+            {
+                UserModel user = await _context.Users.FirstOrDefaultAsync(bancoUsers => bancoUsers.Id == id);
+
+                if (user == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "No User found!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                responseModel.Data = user;
+                responseModel.Message = "User found!";
+                return responseModel;
+
+            }
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
         }
 
         public Task<ServiceResponse<UserModel>> GetUserByIdAccount(int accountId)
