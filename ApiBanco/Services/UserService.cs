@@ -71,10 +71,32 @@ namespace ApiBanco.Services
             }
         }
 
-        public Task<ServiceResponse<UserModel>> GetUserByIdAccount(int accountId)
+        public async Task<ServiceResponse<UserModel>> GetUserByIdAccount(int accountId)
         {
-            throw new NotImplementedException();
-        }
+            ServiceResponse<UserModel> responseModel = new ServiceResponse<UserModel>();
+
+            try
+            {
+                AccountModel user = await _context.Accounts.Include(holder => holder.Holder).Where(bancoAccount => bancoAccount.Id == accountId).FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "Not user with a ID Account informed found!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                // Continuar testes //
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
+         }
         public Task<ServiceResponse<List<UserModel>>> CreateUser(CriacaoUserDto newUser)
         {
             throw new NotImplementedException();
