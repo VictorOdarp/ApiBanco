@@ -71,9 +71,9 @@ namespace ApiBanco.Services
             }
         }
 
-        public async Task<ServiceResponse<UserModel>> GetUserByIdAccount(int accountId)
+        public async Task<ServiceResponse<AccountModel>> GetUserByIdAccount(int accountId)
         {
-            ServiceResponse<UserModel> responseModel = new ServiceResponse<UserModel>();
+            ServiceResponse<AccountModel> responseModel = new ServiceResponse<AccountModel>();
 
             try
             {
@@ -87,7 +87,8 @@ namespace ApiBanco.Services
                     return responseModel;
                 }
 
-                // Continuar testes //
+                responseModel.Data = user;
+                responseModel.Message = "User by ID Account found!";
                 return responseModel;
             }
             catch (Exception ex)
@@ -97,19 +98,98 @@ namespace ApiBanco.Services
                 return responseModel;
             }
          }
-        public Task<ServiceResponse<List<UserModel>>> CreateUser(CriacaoUserDto newUser)
+        public async Task<ServiceResponse<List<UserModel>>> CreateUser(CriacaoUserDto newUser)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<UserModel>> responseModel = new ServiceResponse<List<UserModel>>();
+
+            try
+            {
+                UserModel user = new UserModel
+                {
+                    Name = newUser.Name,
+                    Surname = newUser.Surname,
+                    Cpf = newUser.Cpf,
+                };
+
+                _context.Add(user);
+                await _context.SaveChangesAsync();
+
+                responseModel.Data = await _context.Users.ToListAsync();
+                responseModel.Message = "User created successfuly";
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
         }
 
-        public Task<ServiceResponse<List<UserModel>>> EditUser(EdicaoUserDto editUser)
+        public async Task<ServiceResponse<List<UserModel>>> EditUser(EdicaoUserDto editUser)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<UserModel>> responseModel = new ServiceResponse<List<UserModel>>();
+
+            try
+            {
+                UserModel user = await _context.Users.FirstOrDefaultAsync(bancoUser => bancoUser.Id == editUser.Id);
+
+                if(user == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "Not user found!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                user.Name = editUser.Name;
+                user.Surname = editUser.Surname;
+                user.Cpf = editUser.Cpf;
+
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+
+                responseModel.Data = await _context.Users.ToListAsync();
+                responseModel.Message = "User edit successfuly";
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
         }
 
-        public Task<ServiceResponse<List<UserModel>>> DeleteUser(int id)
+        public async Task<ServiceResponse<List<UserModel>>> DeleteUser(int id)
         {
-            throw new NotImplementedException();
+            ServiceResponse<List<UserModel>> responseModel = new ServiceResponse<List<UserModel>>();
+
+            try
+            {
+                UserModel user = await _context.Users.FirstOrDefaultAsync(bancoUser => bancoUser.Id == id);
+
+                if (user == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "Not user found!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                _context.Remove(user);
+                await _context.SaveChangesAsync();
+
+                responseModel.Data = await _context.Users.ToListAsync();
+                responseModel.Message = "User removed successfuly";
+                return responseModel;
+            }
+            catch (Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
         }
 
     }

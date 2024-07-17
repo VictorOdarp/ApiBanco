@@ -9,7 +9,7 @@ namespace ApiBanco.Interface
     {
         public Task<ServiceResponse<List<UserModel>>> GetAllUsers();
         public Task<ServiceResponse<UserModel>> GetUserById(int id);
-        public Task<ServiceResponse<UserModel>> GetUserByIdAccount(int accountId);
+        public Task<ServiceResponse<AccountModel>> GetUserByIdAccount(int accountId);
         public Task<ServiceResponse<List<UserModel>>> CreateUser(CriacaoUserDto newUser);
         public Task<ServiceResponse<List<UserModel>>> EditUser(EdicaoUserDto editUser);
         public Task<ServiceResponse<List<UserModel>>> DeleteUser(int id);
