@@ -1,4 +1,5 @@
-﻿using ApiBanco.Interface;
+﻿using ApiBanco.Dto.User;
+using ApiBanco.Interface;
 using ApiBanco.Models;
 using ApiBanco.Services;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +30,20 @@ namespace ApiBanco.Controllers
         public async Task<ActionResult<ServiceResponse<UserModel>>> GetUserById(int id)
         {
             var user = await _userInterface.GetUserById(id);
+            return Ok(user);
+        }
+
+        [HttpGet("GetUserByIdAccount/{id}")]
+        public async Task<ActionResult<ServiceResponse<AccountModel>>> GetUserByIdAccount(int id)
+        {
+            var user = await _userInterface.GetUserByIdAccount(id);
+            return Ok(user);
+        }
+
+        [HttpPost("CreateUser")]
+        public async Task<ActionResult<ServiceResponse<List<UserModel>>>> CreateUser (CriacaoUserDto newUser)
+        {
+            var user = await _userInterface.CreateUser(newUser);
             return Ok(user);
         }
 
