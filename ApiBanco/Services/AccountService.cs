@@ -148,7 +148,7 @@ namespace ApiBanco.Services
             }
         } 
 
-        public async  Task<ServiceResponse<List<AccountModel>>> EditAccount(EdicaoAccountDto editAccount)
+        public async Task<ServiceResponse<List<AccountModel>>> EditAccount(EdicaoAccountDto editAccount)
         {
             ServiceResponse<List<AccountModel>> responseModel = new ServiceResponse<List<AccountModel>>();
 
@@ -230,8 +230,6 @@ namespace ApiBanco.Services
                     return responseModel;
                 }
 
-                account.Balance += value;
-
                 if (value <= 0)
                 {
                     responseModel.Data = null;
@@ -239,6 +237,11 @@ namespace ApiBanco.Services
                     responseModel.Status = false;
                     return responseModel;
                 }
+
+                account.Balance += value;
+
+                _context.Update(account);
+                await _context.SaveChangesAsync();
 
                 responseModel.Data = account;
                 responseModel.Message = "Deposit of " + value + (" reais made successfully!");
@@ -268,8 +271,6 @@ namespace ApiBanco.Services
                     return responseModel;
                 }
 
-                account.Balance -= value;
-
                 if (value > account.Balance)
                 {
                     responseModel.Data = null;
@@ -277,6 +278,11 @@ namespace ApiBanco.Services
                     responseModel.Status = false;
                     return responseModel;
                 }
+
+                account.Balance -= value;
+
+                _context.Update(account);
+                await _context.SaveChangesAsync();
 
                 responseModel.Data = account;
                 responseModel.Message = "Withdraw of " + value + (" reais made successfully!");

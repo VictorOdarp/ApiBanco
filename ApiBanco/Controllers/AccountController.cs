@@ -4,6 +4,7 @@ using ApiBanco.Models;
 using ApiBanco.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks.Dataflow;
 
 namespace ApiBanco.Controllers
 {
@@ -47,9 +48,23 @@ namespace ApiBanco.Controllers
         }
 
         [HttpDelete("RemoveAccount")]
-        public async Task<ActionResult<List<AccountModel>>> RemoveAccount(int id)
+        public async Task<ActionResult<ServiceResponse<AccountModel>>> RemoveAccount(int id)
         {
             var account = await _accountInterface.RemoveAccount(id);
+            return Ok(account);
+        }
+
+        [HttpPut("DepositAccount/{id}/{value}")]
+        public async Task<ActionResult<ServiceResponse<AccountModel>>> DepositAccount(int id, double value)
+        {
+            var account = await _accountInterface.DepositAccount(id, value);
+            return Ok(account);
+        }
+
+        [HttpPut("WithdrawAccount/{id}/{value}")]
+        public async Task<ActionResult<ServiceResponse<AccountModel>>> WithdrawAccount(int id, double value)
+        {
+            var account = await _accountInterface.WithdrawAccount(id, value);
             return Ok(account);
         }
     }

@@ -47,5 +47,19 @@ namespace ApiBanco.Controllers
             return Ok(user);
         }
 
+        [HttpPut("EditUser")]
+        public async Task<ActionResult<ServiceResponse<List<UserModel>>>> EditUser(EdicaoUserDto editUser)
+        {
+            var user = await _userInterface.EditUser(editUser);
+            return Ok(user);
+        }
+
+        [HttpDelete("RemoveUser/{id}")]
+        public async Task<ActionResult<ServiceResponse<List<UserModel>>>> RemoveUser (int id)
+        {
+            var user = await _userInterface.DeleteUser(id);
+            return Ok(user);
+        }
+ 
     }
 }

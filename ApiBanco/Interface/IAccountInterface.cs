@@ -12,5 +12,7 @@ namespace ApiBanco.Interface
         public Task<ServiceResponse<List<AccountModel>>> CreateAccount(CriacaoAccountDto newAccount);
         public Task<ServiceResponse<List<AccountModel>>> EditAccount(EdicaoAccountDto editAccount);
         public Task<ServiceResponse<List<AccountModel>>> RemoveAccount (int id);
+        public Task<ServiceResponse<AccountModel>> DepositAccount(int id, double value);
+        public Task<ServiceResponse<AccountModel>> WithdrawAccount(int id, double value);
      }
 }
