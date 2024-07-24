@@ -295,5 +295,22 @@ namespace ApiBanco.Services
                 return responseModel;
             }
         }
+
+        public async Task<ServiceResponse<AccountModel>> TransferAccount(int idSender, int idReceiver, double value)
+        {
+            ServiceResponse<AccountModel> responseModel = new ServiceResponse<AccountModel>();
+
+            try
+            {
+                AccountModel accountSender = await _context.Accounts.Include(holder => holder.Holder).FirstOrDefaultAsync(bancoAccount => bancoAccount.Id == idSender);
+
+            }
+            catch(Exception ex)
+            {
+                responseModel.Message = ex.Message;
+                responseModel.Status = false;
+                return responseModel;
+            }
+        }
     }
 }
