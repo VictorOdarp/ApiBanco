@@ -14,5 +14,6 @@ namespace ApiBanco.Interface
         public Task<ServiceResponse<List<AccountModel>>> RemoveAccount (int id);
         public Task<ServiceResponse<AccountModel>> DepositAccount(int id, double value);
         public Task<ServiceResponse<AccountModel>> WithdrawAccount(int id, double value);
+        public Task<ServiceResponse<List<AccountModel>>> TransferAccount(int idSender, int idReceiver, double value);
      }
 }

@@ -67,5 +67,12 @@ namespace ApiBanco.Controllers
             var account = await _accountInterface.WithdrawAccount(id, value);
             return Ok(account);
         }
+
+        [HttpPut("TransferAccount/{idSender}/{idReceiver}/{value}")]
+        public async Task<ActionResult<List<ServiceResponse<AccountModel>>>> TransferAccount (int idSender, int idReceiver, double value)
+        {
+            var accounts = await _accountInterface.TransferAccount(idSender, idReceiver, value);
+            return Ok(accounts);
+        }
     }
 }

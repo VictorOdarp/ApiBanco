@@ -3,6 +3,7 @@ using ApiBanco.Dto.Account;
 using ApiBanco.Interface;
 using ApiBanco.Models;
 using Microsoft.AspNetCore.Components.Server;
+using Microsoft.AspNetCore.DataProtection.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Update;
@@ -296,14 +297,57 @@ namespace ApiBanco.Services
             }
         }
 
-        public async Task<ServiceResponse<AccountModel>> TransferAccount(int idSender, int idReceiver, double value)
+        public async Task<ServiceResponse<List<AccountModel>>> TransferAccount(int idSender, int idReceiver, double value)
         {
-            ServiceResponse<AccountModel> responseModel = new ServiceResponse<AccountModel>();
+            ServiceResponse<List<AccountModel>> responseModel = new ServiceResponse<List<AccountModel>>();
 
             try
             {
                 AccountModel accountSender = await _context.Accounts.Include(holder => holder.Holder).FirstOrDefaultAsync(bancoAccount => bancoAccount.Id == idSender);
 
+                if (accountSender == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "No account Sender found!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                AccountModel accountReceiver = await _context.Accounts.Include(holder => holder.Holder).FirstOrDefaultAsync(bancoAccount => bancoAccount.Id == idReceiver);
+
+                if (accountReceiver == null)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "No account Receiver found!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                if (value <= 0)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "Invalid value!";
+                    responseModel.Status = false;   
+                    return responseModel;
+                }
+                else if (value > accountSender.Balance)
+                {
+                    responseModel.Data = null;
+                    responseModel.Message = "The amount is greater than what is available in the account!";
+                    responseModel.Status = false;
+                    return responseModel;
+                }
+
+                accountSender.Balance -= value;
+                accountReceiver.Balance += value;
+
+                _context.Update(accountSender);
+                _context.Update(accountReceiver);
+                await _context.SaveChangesAsync();
+
+                responseModel.Data = await _context.Accounts.Include(holder => holder.Holder).ToListAsync();
+                responseModel.Message = "The transfer was successful!";
+                return responseModel;
             }
             catch(Exception ex)
             {
